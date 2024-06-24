@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import userRoutes from './routes/userRoutes';
+import eventRoutes from './routes/eventRoutes';
 import { config } from './config/config';
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(express.json());
 
 // Routes
 app.use('/users', userRoutes);
+app.use('/events', eventRoutes);
 
 // Connect to MongoDB
 mongoose.connect(mongoUri)
