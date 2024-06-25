@@ -6,6 +6,7 @@ import { config } from './config/config';
 const app = express();
 const port = config.PORT;
 const mongoUri = config.MONGO_URI;
+console.log(config);
 
 // Middleware to parse JSON
 app.use(express.json());

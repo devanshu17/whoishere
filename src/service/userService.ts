@@ -1,5 +1,6 @@
 import { IUser } from "../interfaces/users/IUser";
 import User from "../models/User";
+import { hashPassword } from "../utils/hash";
 
 /**
  * Saves a user to the database.
@@ -9,6 +10,7 @@ import User from "../models/User";
 export async function saveUser(userInput: Omit<IUser, '_id'>): Promise<IUser> {
     try {
       const user = new User(userInput);
+      user.password = await hashPassword(user.password);
       const savedUser = await user.save();
       return savedUser;
     } catch (error: any) {
