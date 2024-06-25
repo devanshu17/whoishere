@@ -1,6 +1,7 @@
 // src/qr-generator.ts
 import qr from 'qrcode';
 import fs from 'fs';
+import { config } from '../config/config';
 
 export const generateQRCode = async (text: string, filePath: string): Promise<void> => {
   try {
@@ -14,4 +15,8 @@ export const generateQRCode = async (text: string, filePath: string): Promise<vo
   } catch (error) {
     console.error('Error generating QR code:', error);
   }
+}
+
+export const generateQrUrl = (eventId: string): string => {
+    return `${config.BASE_URL}/events/${eventId}`
 }
