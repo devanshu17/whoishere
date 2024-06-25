@@ -1,7 +1,7 @@
 export interface IEvents {
     qrlink: string;
     name: string;
-    date: string;
+    date: Date;
     location: string;
     capacity: number;
     websiteUrl: string;
