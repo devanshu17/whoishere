@@ -1,7 +1,6 @@
 import { Router, Request, Response } from 'express';
-import User from '../models/User';
-import { IUser } from '../interfaces/users/IUser';
 import * as UserService from '../service/userService';
+import authMiddleware, { AuthenticatedRequest } from '../middleware/authMiddleware';
 
 const router: Router = Router();
 
@@ -15,10 +14,36 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// Get all users
-router.get('/', async (req: Request, res: Response) => {
+// Get current users
+router.get('/',authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const users = await User.find({}, { __v: 0 }).lean<Omit<IUser, '_id'>>();
+    res.json(req.user);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.get('/:userId', async (req: Request, res: Response) => {
+  try {
+    const users = await UserService.getUser(req.params.userId);
+    res.json(users);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.get('/:userId/events', async (req: Request, res: Response) => {
+  try {
+    const users = await UserService.getEventsForUser(req.params.userId);
+    res.json(users);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.post('/login', async (req: Request, res: Response) => {
+  try {
+    const users = await UserService.loginUser(req.body.username, req.body.password);
     res.json(users);
   } catch (err: any) {
     res.status(500).json({ message: err.message });

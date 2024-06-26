@@ -3,11 +3,17 @@ import mongoose from 'mongoose';
 import userRoutes from './routes/userRoutes';
 import eventRoutes from './routes/eventRoutes';
 import { config } from './config/config';
+import * as fs from 'fs';
 
 const app = express();
 const port = config.PORT;
 const mongoUri = config.MONGO_URI;
 console.log(config);
+
+//Check if data dir exists else create one
+if (!fs.existsSync(config.DATA_PATH)){
+  fs.mkdirSync(config.DATA_PATH);
+}
 
 // Middleware to parse JSON
 app.use(express.json());

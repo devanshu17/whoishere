@@ -1,10 +1,11 @@
 import { IUser } from '../users/IUser';
 import { UserRoles } from '../../types/userRoles';
 
-export interface IRegistrations{
+export interface IRegisteredUsers{
     userId: string;
     eventId: string;
-    date: Date;
-    location: string;
+    registrationId: string;
+    registrationDate: Date;
     userRole: UserRoles;
+    userInfo: Omit<IUser, 'password'>
 }

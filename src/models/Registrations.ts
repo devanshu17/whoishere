@@ -3,12 +3,12 @@ import { IRegistrations } from '../interfaces/registrations/IRegistrations';
 import { UserRoles } from '../types/userRoles';
 
 const RegistrationsSchema: Schema = new Schema({
-    user: {
+    userId: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
-    eventid: { type: String, required: true },
+    eventId: { type: Schema.Types.ObjectId, required: true },
     date: { type: Date, required: true},
     location: { type: String, required: true },
     userRole: { type: String, enum: Object.values(UserRoles), required: true },

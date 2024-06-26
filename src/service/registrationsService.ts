@@ -1,11 +1,7 @@
 import mongoose from "mongoose";
 import { IRegistrations } from "../interfaces/registrations/IRegistrations";
-import { IUser } from "../interfaces/users/IUser";
 import Registrations from "../models/Registrations";
-import User from "../models/User";
-import { config } from "../config/config";
-import { isNullOrUndefinedOrEmpty } from "../utils/utility";
-import path from "path";
+import { IRegisteredUsers } from "../interfaces/registrations/IRegisteredUsers";
 
 export async function addRegistration(RegistrationInput: Omit<IRegistrations, '_id'>): Promise<IRegistrations> {
     try {
@@ -13,28 +9,49 @@ export async function addRegistration(RegistrationInput: Omit<IRegistrations, '_
       const addedRegistration = await registration.save();
       return addedRegistration;
     } catch (error: any) {
-      throw new Error(`Error saving user: ${error.message}`);
+      throw new Error(`Error saving Registration: ${error.message}`);
     }
 }
 
-export async function getUsersAttendingEvent(eventId: string): Promise<IUser[]> {
+export async function getUsersAttendingEvent(eventId: string): Promise<IRegisteredUsers[]> {
     try {
         if (!mongoose.Types.ObjectId.isValid(eventId)) {
             throw new Error('Invalid Event ID format');
           }
-        // Find registrations for the given event
-        const registrations = await Registrations.find({ eventId }).exec();
 
-        // Extract user IDs from registrations
-        const userIds = registrations.map(registration => registration.user);
-
-        // Find users based on the extracted IDs
-        const users = await User.find({ _id: { $in: userIds } }).exec();
-        return users;
-
-        // alter approach, not sure
-        // const registrations = await Registrations.find({ eventid: eventId }).populate('user');
-        // return registrations.map(registration => registration.user);
+        const registrations = await Registrations.aggregate([
+          {
+            $match: {
+              eventId: new mongoose.Types.ObjectId(eventId),
+            },
+          },
+          {
+            $lookup: {
+              from: "users",      
+              localField: "userId", 
+              foreignField: "_id",  
+              as: "UserInfo"        
+            }
+          },
+          {
+            $unwind: "$UserInfo" 
+          },
+          {
+            $project: {
+              _id: 0,
+              registrationId: "$_id",
+              eventId: 1,
+              userId: 1,
+              registrationDate: "$date",
+              userRole: 1,
+              "UserInfo.name": 1,
+              "UserInfo.email": 1,
+              "UserInfo.socials": 1,
+            }
+          },
+        ]);
+          
+      return registrations;
     } catch (error: any) {
         throw new Error(`Failed to get users attending event ${eventId}: ${error.message}`);
     }
