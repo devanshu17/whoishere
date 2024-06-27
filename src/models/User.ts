@@ -16,7 +16,7 @@ const UserSchema: Schema = new Schema({
   designation: { type: String, required:false },
   intro: { type: String, required: true },
   socials: SocialsSchema,
-  profilePic: { type: String, required:true },
+  profilePic: { type: String, required:false },
 });
 
 const User = mongoose.model<IUser & mongoose.Document>('User', UserSchema);
