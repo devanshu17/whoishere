@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 import userRoutes from './routes/userRoutes';
 import eventRoutes from './routes/eventRoutes';
 import { config } from './config/config';
@@ -19,10 +20,11 @@ if (!fs.existsSync(config.DATA_PATH)){
 app.use(express.json());
 
 // Routes
+app.use(cors());
 app.use('/users', userRoutes);
 app.use('/events', eventRoutes);
 
-// Connect to MongoDB
+// Connect to MongoDB 
 mongoose.connect(mongoUri)
   .then(() => {
     console.log('Connected to MongoDB');
