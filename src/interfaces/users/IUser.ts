@@ -2,6 +2,8 @@ export interface IUser {
     name: string;
     email: string;
     password: string;
+    companyName: string;
+    designation: string;
     intro: string;
     socials: {
         github: string,
@@ -9,6 +11,7 @@ export interface IUser {
         twitter: string,
         other: string,
     }
+    profilePic: string;
   }
   
   

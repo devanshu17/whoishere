@@ -12,8 +12,11 @@ const UserSchema: Schema = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  companyName: { type: String, required:false },
+  designation: { type: String, required:false },
   intro: { type: String, required: true },
   socials: SocialsSchema,
+  profilePic: { type: String, required:true },
 });
 
 const User = mongoose.model<IUser & mongoose.Document>('User', UserSchema);
