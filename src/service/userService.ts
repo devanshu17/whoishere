@@ -15,7 +15,6 @@ import { uploadBlobFromBuffer } from "../utils/blobStorage";
  */
 export async function saveUser(userInput: Omit<IUser, '_id'>): Promise<IUser> {
     try {
-      // console.log(userInput);
       const user = new User(userInput);
       // user.password = await hashPassword(user.password);
       const savedUser = await user.save();
@@ -102,12 +101,15 @@ export async function loginUser(username: string, password: string): Promise<ITo
 }
 
 export async function updateProfilePicture(
-  userId: string,
+  userId: string | undefined,
   imageName: string | undefined,
   buffer: Buffer | undefined,
   bufferSize: number | undefined,
   mimeType: string | undefined,
 ): Promise<IUser> {
+  if(!userId){
+    throw new Error('Invalid User');
+  }
   const profilePic = await uploadBlobFromBuffer(`${userId}_${imageName}`,buffer, bufferSize, mimeType);
   const uploadedProfile = await User.findOneAndUpdate({_id: userId}, { profilePic: profilePic.url}, {new: true});
   if(!uploadedProfile){

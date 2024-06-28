@@ -7,9 +7,18 @@ import { updateProfilePicture } from '../service/userService';
 const router: Router = Router();
 
 // Create a new user
-router.post('/', async (req: Request, res: Response) => {
+router.post('/',upload.single("profileImg"), async (req: Request, res: Response) => {
   try {
-    const savedUser = await UserService.saveUser(req.body);
+    let savedUser = await UserService.saveUser(req.body);
+    const userId = savedUser._id;
+    if(req.file){
+      const fileBuffer = req.file?.buffer;
+      const fileSize = req.file?.size;
+      const mimeType = req.file?.mimetype;
+      // const resp = await updateProfilePicture(`${req.params.userId}_${req.file?.originalname}`,fileBuffer, fileSize, mimeType);
+      savedUser = await updateProfilePicture(userId, req.file?.originalname,fileBuffer, fileSize, mimeType);
+      console.log(`Profile Image successfully uploaded.`, {userId, savedUser});
+    }
     res.status(201).json(savedUser);
   } catch (err: any) {
     res.status(400).json({ message: err.message });
