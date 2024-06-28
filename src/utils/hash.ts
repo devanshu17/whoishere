@@ -19,6 +19,7 @@ export async function hashPassword(password: string): Promise<string> {
  * @param hashedPassword Hashed password stored in the database.
  * @returns Promise resolving to a boolean indicating if the password matches.
  */
-export async function comparePasswords(password: string, hashedPassword: string): Promise<boolean> {
+export async function comparePasswords(password: string, hashedPassword: string | undefined): Promise<boolean> {
+  if(!hashedPassword) throw new Error('Password must not be empty');
   return await bcrypt.compare(password, hashedPassword);
 }

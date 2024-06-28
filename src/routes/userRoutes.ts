@@ -43,6 +43,7 @@ router.get('/:userId/events', async (req: Request, res: Response) => {
 
 router.post('/login', async (req: Request, res: Response) => {
   try {
+    // console.log('Login user',req.body);
     const users = await UserService.loginUser(req.body.username, req.body.password);
     res.json(users);
   } catch (err: any) {

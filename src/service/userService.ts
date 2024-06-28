@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { IUser } from "../interfaces/users/IUser";
 import Registrations from "../models/Registrations";
 import User from "../models/User";
-import { hashPassword } from "../utils/hash";
+import { comparePasswords, hashPassword } from "../utils/hash";
 import { isNullOrUndefinedOrEmpty } from "../utils/utility";
 import { IToken } from "../interfaces/tokens/IToken";
 import { generateRefreshToken, generateToken } from "../utils/jwt";
@@ -14,8 +14,9 @@ import { generateRefreshToken, generateToken } from "../utils/jwt";
  */
 export async function saveUser(userInput: Omit<IUser, '_id'>): Promise<IUser> {
     try {
+      // console.log(userInput);
       const user = new User(userInput);
-      user.password = await hashPassword(user.password);
+      // user.password = await hashPassword(user.password);
       const savedUser = await user.save();
       return savedUser;
     } catch (error: any) {
@@ -86,7 +87,8 @@ export async function findUsers(): Promise<IUser[]> {
   }
 
 export async function loginUser(username: string, password: string): Promise<IToken> {
-  const user: IUser | null = await User.findOne({email: username, password: password}, {password: 0}).lean();
+  const user: IUser | null = await User.findOne({email: username, password: password}, { password: 0}).lean();
+    
   if(isNullOrUndefinedOrEmpty(user)){
     throw new Error("Invalid Credentials");
   }
