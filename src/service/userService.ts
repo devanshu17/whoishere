@@ -6,6 +6,7 @@ import { comparePasswords, hashPassword } from "../utils/hash";
 import { isNullOrUndefinedOrEmpty } from "../utils/utility";
 import { IToken } from "../interfaces/tokens/IToken";
 import { generateRefreshToken, generateToken } from "../utils/jwt";
+import { uploadBlobFromBuffer } from "../utils/blobStorage";
 
 /**
  * Saves a user to the database.
@@ -98,4 +99,20 @@ export async function loginUser(username: string, password: string): Promise<ITo
     authToken: generateToken(user),
   };
   return token;
+}
+
+export async function updateProfilePicture(
+  userId: string,
+  imageName: string | undefined,
+  buffer: Buffer | undefined,
+  bufferSize: number | undefined,
+  mimeType: string | undefined,
+): Promise<IUser> {
+  const profilePic = await uploadBlobFromBuffer(`${userId}_${imageName}`,buffer, bufferSize, mimeType);
+  const uploadedProfile = await User.findOneAndUpdate({_id: userId}, { profilePic: profilePic.url}, {new: true});
+  if(!uploadedProfile){
+    throw new Error('Invalid user');
+  }
+  // uploadedProfile = Omit<uploadedProfile, 'password'>;
+  return uploadedProfile;
 }

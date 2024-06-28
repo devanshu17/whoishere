@@ -43,7 +43,7 @@ async function uploadBlobFromBuffer(
     bufferSize: number | undefined,
     mimeType: string | undefined,
     containerName: string = config.AZURE_STORAGE_CONTAINER_NAME,
-  ): Promise<any> {
+  ) {
     if(!buffer || !bufferSize ){
         throw new Error("File Buffer cannot be empty");
     }
