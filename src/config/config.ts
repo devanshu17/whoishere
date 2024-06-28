@@ -14,6 +14,9 @@ class Config {
   public readonly JWT_REFRESH_SECRET: string;
   public readonly JWT_TOKEN_EXPIRY: string;
   public readonly JWT_REFRESH_EXPIRY: string;
+  public readonly AZURE_STORAGE_ACCOUNT_NAME: string;
+  public readonly AZURE_STORAGE_CONTAINER_NAME: string;
+  public readonly AZURE_STORAGE_ACCOUNT_KEY: string;
 
   constructor() {
     this.PORT = parseInt(process.env.PORT || '3000', 10);
@@ -24,6 +27,9 @@ class Config {
     this.JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'jwtrefreshsecret';
     this.JWT_TOKEN_EXPIRY = process.env.JWT_TOKEN_EXPIRY || '1h';
     this.JWT_REFRESH_EXPIRY = process.env.JWT_REFRESH_EXPIRY || '1d';
+    this.AZURE_STORAGE_ACCOUNT_NAME = process.env.AZURE_STORAGE_ACCOUNT_NAME || 'whoishere';
+    this.AZURE_STORAGE_CONTAINER_NAME = process.env.AZURE_STORAGE_CONTAINER_NAME || 'profile';
+    this.AZURE_STORAGE_ACCOUNT_KEY = process.env.AZURE_STORAGE_ACCOUNT_KEY || '';
   }
 }
 

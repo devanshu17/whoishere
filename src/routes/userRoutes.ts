@@ -1,6 +1,7 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import * as UserService from '../service/userService';
 import authMiddleware, { AuthenticatedRequest } from '../middleware/authMiddleware';
+import { upload, uploadBlobFromBuffer, uploadBlobFromLocalPath } from '../utils/blobStorage';
 
 const router: Router = Router();
 
@@ -50,4 +51,13 @@ router.post('/login', async (req: Request, res: Response) => {
   }
 });
 
+router.post('/:userId/profileimage', upload.single("profile"), async (req: Request, res: Response) => {
+  const fileBuffer = req.file?.buffer;
+  const fileSize = req.file?.size;
+  const mimeType = req.file?.mimetype;
+  const resp = await uploadBlobFromBuffer(`${req.params.userId}_${req.file?.originalname}`,fileBuffer, fileSize, mimeType);
+  res.status(200).send(resp);
+});
+
 export default router;
+

@@ -2,21 +2,22 @@
 import qr from 'qrcode';
 import fs from 'fs';
 import { config } from '../config/config';
+import path from 'path';
+import { uploadBlobFromLocalPath } from './blobStorage';
 
-export const generateQRCode = async (text: string, filePath: string): Promise<void> => {
+export const generateQRCode = async (text: string, fileName: string): Promise<any> => {
   try {
-    // Generate QR code as a data URL
+    const filePath: string = path.join(config.DATA_PATH,fileName);
     const qrDataUrl = await qr.toDataURL(text);
-
-    // Save QR code as PNG file
     await fs.promises.writeFile(filePath, qrDataUrl.split(',')[1], 'base64');
-
-    console.log(`QR code generated and saved to ${filePath}`);
+    const uploadedBlob = await uploadBlobFromLocalPath(fileName, filePath, 'qr');
+    console.log(`QR code generated and saved to ${uploadedBlob?.url}`);
+    return uploadedBlob;
   } catch (error) {
     console.error('Error generating QR code:', error);
   }
 }
 
-export const generateQrUrl = (eventId: string): string => {
+export const generateEventUrlForQr = (eventId: string): string => {
     return `${config.BASE_URL}/events/${eventId}`
 }
