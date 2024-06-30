@@ -46,7 +46,11 @@ export async function getUsersAttendingEvent(eventId: string): Promise<IRegister
               userRole: 1,
               "UserInfo.name": 1,
               "UserInfo.email": 1,
+              "UserInfo.companyName": 1,
+              "UserInfo.designation": 1,
+              "UserInfo.intro": 1,
               "UserInfo.socials": 1,
+              "UserInfo.profilePic": 1,
             }
           },
         ]);
