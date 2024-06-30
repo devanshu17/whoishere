@@ -14,5 +14,7 @@ const RegistrationsSchema: Schema = new Schema({
     userRole: { type: String, enum: Object.values(UserRoles), required: true },
 });
 
+RegistrationsSchema.index({ eventId: 1, userId: 1 }, { unique: true })
+
 const Registrations = mongoose.model<IRegistrations & mongoose.Document>('Registrations', RegistrationsSchema);
 export default Registrations;

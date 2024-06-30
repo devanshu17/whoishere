@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import { IRegistrations } from "../interfaces/registrations/IRegistrations";
 import Registrations from "../models/Registrations";
 import { IRegisteredUsers } from "../interfaces/registrations/IRegisteredUsers";
+import { getEvent } from "./eventService";
+import { IRegistrationInfo } from "../interfaces/registrations/IRegistrationInfo";
 
 export async function addRegistration(RegistrationInput: Omit<IRegistrations, '_id'>): Promise<IRegistrations> {
     try {
@@ -55,6 +57,18 @@ export async function getUsersAttendingEvent(eventId: string): Promise<IRegister
     } catch (error: any) {
         throw new Error(`Failed to get users attending event ${eventId}: ${error.message}`);
     }
+}
+
+export async function getRegistrationInfoOfUserForEvent(eventId: string, userId: string): Promise<IRegistrationInfo> {
+  const eventInfo = await getEvent(eventId);
+  if(!eventInfo){
+    throw new Error('Event Not Found');
+  }
+  const registrationInfo = await Registrations.findOne({eventId: eventId, userId: userId}).exec();
+  return {
+    eventInfo,
+    registrationInfo
+  }
 }
 
 

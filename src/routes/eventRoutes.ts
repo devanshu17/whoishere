@@ -6,6 +6,8 @@ import path from 'path';
 import { config } from '../config/config';
 import * as fs from 'fs';
 import * as RegistrationsService from '../service/registrationsService';
+import authMiddleware, { AuthenticatedRequest } from '../middleware/authMiddleware';
+import { IUser } from '../interfaces/users/IUser';
 
 const router: Router = Router();
 
@@ -68,16 +70,6 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-// Create a new Registration
-router.post('/register/user', async (req: Request, res: Response) => {
-  try {
-    const addedRegistration = await RegistrationsService.addRegistration(req.body);
-    res.status(201).json(addedRegistration);
-  } catch (err: any) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
 router.get('/:eventId/users', async (req: Request, res: Response) => {
   try {
     const event =  await RegistrationsService.getUsersAttendingEvent(req.params.eventId);
@@ -88,6 +80,37 @@ router.get('/:eventId/users', async (req: Request, res: Response) => {
     }
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+router.get('/:eventId/user',authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const user: IUser = req.user;
+    if(user._id == null){
+      throw new Error("User cannot be null");
+    }
+    const registrationInfo =  await RegistrationsService.getRegistrationInfoOfUserForEvent(req.params.eventId, user._id);
+    res.status(200).send(registrationInfo);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/:eventId/user',authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const user: IUser = req.user;
+    if(user._id == null){
+      throw new Error("User cannot be null");
+    }
+    const input = {
+      ...req.body,
+      userId: user._id,
+      eventId: req.params.eventId,
+    };
+    const addedRegistration = await RegistrationsService.addRegistration(input);
+    res.status(201).json(addedRegistration);
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
   }
 });
 

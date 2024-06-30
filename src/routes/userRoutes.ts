@@ -71,5 +71,16 @@ router.post('/:userId/profileimage', upload.single("profile"), async (req: Reque
   res.status(200).send(resp);
 });
 
+router.post('/refreshToken', async (req: Request, res: Response) => {
+  try{
+    const refreshToken = req.body.token;
+    const newToken = await UserService.refreshUserToken(refreshToken);
+    res.status(200).json(newToken);
+  } catch (e: any) {
+    console.error(e);
+    res.status(401).json({msg: e.message});
+  }
+});
+
 export default router;
 

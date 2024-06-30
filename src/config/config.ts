@@ -14,6 +14,7 @@ class Config {
   public readonly JWT_REFRESH_SECRET: string;
   public readonly JWT_TOKEN_EXPIRY: string;
   public readonly JWT_REFRESH_EXPIRY: string;
+  public readonly JWT_REFRESH_TOKEN_LIMIT_IN_SEC: number;
   public readonly AZURE_STORAGE_ACCOUNT_NAME: string;
   public readonly AZURE_STORAGE_CONTAINER_NAME: string;
   public readonly AZURE_STORAGE_ACCOUNT_KEY: string;
@@ -30,6 +31,7 @@ class Config {
     this.AZURE_STORAGE_ACCOUNT_NAME = process.env.AZURE_STORAGE_ACCOUNT_NAME || 'whoishere';
     this.AZURE_STORAGE_CONTAINER_NAME = process.env.AZURE_STORAGE_CONTAINER_NAME || 'profile';
     this.AZURE_STORAGE_ACCOUNT_KEY = process.env.AZURE_STORAGE_ACCOUNT_KEY || '';
+    this.JWT_REFRESH_TOKEN_LIMIT_IN_SEC = parseInt(process.env.JWT_REFRESH_TOKEN_LIMIT_IN_SEC || '10800'); //3 hours
   }
 }
 

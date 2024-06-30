@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { config } from '../config/config';
 import { IUser } from '../interfaces/users/IUser';
+import { IDecodedToken } from '../interfaces/tokens/IDecodedToken';
 
 const JWT_TOKEN_SECRET = config.JWT_TOKEN_SECRET;
 const JWT_TOKEN_EXPIRY = config.JWT_TOKEN_EXPIRY;
@@ -22,10 +23,10 @@ export const generateRefreshToken = (user: Omit<IUser,'password'> | null): strin
 };
 
 
-export const verifyToken = (token: string) => {
-    return jwt.verify(token, JWT_TOKEN_SECRET);
+export const verifyToken = (token: string) : IDecodedToken => {
+    return jwt.verify(token, JWT_TOKEN_SECRET) as IDecodedToken;
 };
 
-export const verifyRefreshToken = (token: string) => {
-    return jwt.verify(token, JWT_REFRESH_SECRET);
+export const verifyRefreshToken = (token: string) : IDecodedToken => {
+    return jwt.verify(token, JWT_REFRESH_SECRET) as IDecodedToken;
 };

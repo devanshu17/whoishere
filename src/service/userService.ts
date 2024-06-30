@@ -3,10 +3,11 @@ import { IUser } from "../interfaces/users/IUser";
 import Registrations from "../models/Registrations";
 import User from "../models/User";
 import { comparePasswords, hashPassword } from "../utils/hash";
-import { isNullOrUndefinedOrEmpty } from "../utils/utility";
+import { isNullOrUndefinedOrEmpty, isTimeValidFromNowFor } from "../utils/utility";
 import { IToken } from "../interfaces/tokens/IToken";
-import { generateRefreshToken, generateToken } from "../utils/jwt";
+import { generateRefreshToken, generateToken, verifyRefreshToken } from "../utils/jwt";
 import { uploadBlobFromBuffer } from "../utils/blobStorage";
+import { config } from "../config/config";
 
 /**
  * Saves a user to the database.
@@ -31,7 +32,7 @@ export async function saveUser(userInput: Omit<IUser, '_id'>): Promise<IUser> {
  */
 export async function getUser(userId: string): Promise<IUser | null> {
   try {
-    return User.findOne({_id: userId}, {password:0}).exec();
+    return User.findOne({_id: userId}, {password:0}).lean();
   } catch (error: any) {
     throw new Error(`Error saving user: ${error.message}`);
   }
@@ -117,4 +118,20 @@ export async function updateProfilePicture(
   }
   // uploadedProfile = Omit<uploadedProfile, 'password'>;
   return uploadedProfile;
+}
+
+export async function refreshUserToken(
+  token: string
+): Promise<IToken>{
+  const tokenInfo = await verifyRefreshToken(token);
+  const user: IUser | null = await getUser(tokenInfo._id as string);
+  const newToken: IToken = {
+    authToken: generateToken(user),
+    refreshToken: token,
+  }
+
+  if(isTimeValidFromNowFor(config.JWT_REFRESH_TOKEN_LIMIT_IN_SEC, tokenInfo.exp)){
+    newToken.refreshToken = generateRefreshToken(user);
+  }
+  return newToken;
 }
